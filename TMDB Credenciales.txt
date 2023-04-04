@@ -1,0 +1,25 @@
+TMDB
+JSanchezDigis
+welcome01$$$@
+KEY: 9531cdae14d8454260e379ee2dd22bf6
+TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NTMxY2RhZTE0ZDg0NTQyNjBlMzc5ZWUyZGQyMmJmNiIsInN1YiI6IjY0MmIxZWY0OWNjNjdiMDU3MTU4OWE5OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.SxfXEiYdvNGwwzCkD5PdR3W0Lrm8Y1ZI8wMonuH5pTs
+
+https://api.themoviedb.org/3/movie/550?api_key=9531cdae14d8454260e379ee2dd22bf6
+
+CSS y HTML cards
+https://freefrontend.com/bootstrap-cards/
+https://codepen.io/nikki-peel/pen/RwavQer CSS y HTML
+
+
+KEY:
+9531cdae14d8454260e379ee2dd22bf6
+REQUEST-TOKEN:
+7020df6d7d2786a5f759355aaf42ce2e7a8791f6
+SESSION_ID:
+de756b638cccc081384a865beaf3a17add0a03a0
+ACCOUNT_ID:
+18699298
+
+https://developers.themoviedb.org/3/movies/get-popular-movies
+https://www.themoviedb.org/
+
