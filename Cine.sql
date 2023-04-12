@@ -116,24 +116,13 @@ JOIN Zona ON Cine.IdZona = Zona.IdZona
 GROUP BY Cine.Venta, Zona.Nombre
 GO
 
-SELECT (SELECT COUNT(*) FROM Cine) --numero de datos
-SELECT SUM(CONVERT(DECIMAL,Cine.Venta)) FROM Cine --Total de ventas
-SELECT Venta FROM Cine
-
-SELECT (SELECT SUM(CONVERT(DECIMAL,Venta)) FROM Cine) / (SELECT COUNT(*) FROM Cine) * 100.0
-
-
 ALTER PROCEDURE VentasGet
 AS
-SELECT SUM(CONVERT(DECIMAL,Cine.Venta)) AS Ventas, Zona.Nombre AS Zonas, (SELECT SUM(CONVERT(DECIMAL,Venta)) FROM Cine) / (SELECT COUNT(*) FROM Cine) * 100.0 AS Porcentaje, 
-CAST(ROW_NUMBER() OVER (ORDER BY Cine.Venta) AS INT) IdCine,Direccion='',IdZona=0,Latitud='',Longitud='',Nombre='',Venta=''
-FROM Cine
-JOIN Zona ON Cine.IdZona = Zona.IdZona
-GROUP BY Cine.Venta, Zona.Nombre
-GO
-
-SELECT Zona.Nombre, (COUNT(Cine.Venta)*100.0)/(SELECT COUNT(*) FROM Cine WHERE Cine.IdZona=Zona.IdZona) AS PorcentajeVenta
-FROM Cine
+--CineGetAll
+SELECT Zona.Nombre AS Zonas, SUM(CONVERT(DECIMAL,Venta)) AS Ventas,
+	   (SUM(CONVERT(DECIMAL,Venta))*100.0) / (SELECT SUM(CONVERT(DECIMAL,Venta)) FROM Cine) AS Porcentaje,
+	   CAST(ROW_NUMBER() OVER (ORDER BY Venta) AS INT) IdCine,Direccion='',IdZona=0,Latitud='',Longitud='',Nombre='',Venta=''
+	   FROM Cine
 INNER JOIN Zona ON Cine.IdZona=Zona.IdZona
-GROUP BY Zona.Nombre
-ORDER BY PorcentajeVenta DESC;
+GROUP BY Zona.Nombre, Cine.Venta
+GO
