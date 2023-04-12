@@ -1,0 +1,88 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <h2>Cines</h2>
+    </div>
+    <hr />
+    <div class="row">
+        <div style="float:right">
+            @Html.ActionLink("Agregar Cine", "Form", "Cine", htmlAttributes: new { @class = "btn btn-success" })
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.Cines != null)
+        {
+            //tabla
+            <table class="table table-bordered table-responsive" id="tblCines">
+                <thead>
+                    <tr>
+                        <td class="text-center" style=" font-weight:bold;">Editar</td>
+
+                        <td style="display: none;">IdCine</td>
+                        <td class="text-center" style=" font-weight:bold;">Longitud</td>
+                        <td class="text-center" style=" font-weight:bold;">Latitud</td>
+                        <td class="text-center" style=" font-weight:bold;">Direccion</td>
+                        <td class="text-center" style=" font-weight:bold;">Venta</td>
+                        <td class="text-center" style=" font-weight:bold;">Zona</td>
+
+                        <td class="text-center" style=" font-weight:bold;">Eliminar</td>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (ML.Cine cine in Model.Cines)
+                    {
+                        <tr>
+                            <td class="text-center"><a class="bi bi-slash-square-fill" href="@Url.Action("Form", "Cine", new { IdCine = cine.IdCine })"></a></td>
+
+                            <td style="display: none;">@cine.IdCine</td>
+                            <td>@cine.Latitud</td>
+                            <td>@cine.Longitud</td>
+                            <td>@cine.Direccion</td>
+                            <td>@cine.Venta</td>
+                            <td style="display: none;">@cine.Zona.IdZona</td>
+                            <td>@cine.Zona.Nombre</td>
+
+
+                            <td class="text-center"><a class="bi bi-trash-fill" href="@Url.Action("Delete", "Cine", new { IdCine = cine.IdCine })" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="total">
+                        <th style="display: none;"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">Ocurrio un error al realizar la consulta </div>
+        }
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        for (i = 6; i <= 6; i++) {
+            var total = 0;
+            $('table#tblCines tbody td:nth-child(' + i + ')').each(function (index) {
+                total += parseFloat($(this).text());
+            });
+            $('table#tblCines tfoot th:nth-child(' + i + ')').text("Total: " + total)
+        }
+    </script>
+}

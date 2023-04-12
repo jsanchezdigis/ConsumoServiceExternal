@@ -1,0 +1,102 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "Cake";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-6">
+        <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+    </div>
+    <div class="col-md-6">
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <div id="map"></div>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&v=weekly&sensor=false" defer></script>
+    </div>
+</div>
+
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+
+@section Scripts
+    {
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var options = {
+                title: {
+                    text: "Cines con mas ventas"
+                },
+                subtitles: [{
+                    text: "Zonas"
+                }],
+                animationEnabled: true,
+                data: [{
+                    type: "pie",
+                    startAngle: 40,
+                    toolTipContent: "<b>{label}</b>: {y}%",
+                    showInLegend: "true",
+                    legendText: "{label}",
+                    indexLabelFontSize: 16,
+                    indexLabel: "{label} - {y}%",
+                    dataPoints: [
+        @foreach (ML.Cine cine in Model.Cines)
+        {
+            <text>{ y: @cine.Porcentaje, label: "@cine.Zona.Nombre" }, </text>
+        }
+                                                //{ y: 25.00, label: "Este" },
+                                                //{ y: 25.00, label: "Oeste" },
+                                                //{ y: 25.00, label: "Sur" },
+                                                //{ y: 25.00, label: "Norte" },
+                                            ]
+                }]
+            };
+            $("#chartContainer").CanvasJSChart(options);
+
+        };
+
+        // Iniciar mapa
+        function initMap() {
+
+            myLatlng = { lat: 19.428019, lng: -99.163904 };
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 11,
+                center: myLatlng,
+            });
+
+        @foreach (ML.Cine cine in Model.Direcciones)
+        {
+            <text>
+                                var contentString = '<div id="content">' +
+                    '<div id="siteNotice">' +
+                    '</div>' +
+                    'Direccion: ' + '@cine.Direccion' +
+                    '<div id="bodyContent">' +
+                    'Ventas:' + '@cine.Venta' + "<br>" +
+                    'Zona:' + '@cine.Zona.Nombre' + "<br>" +
+                    'ID:' + '@cine.IdCine' + "<br>" +
+                    '</div>' +
+                    '</div>';
+
+                var marker_@cine.IdCine = new google.maps.Marker({ position: { lat: @cine.Latitud, lng: @cine.Longitud }, map: map });
+
+                (marker_@cine.IdCine).addListener("click", function () {
+                    (infoWindow_@cine.IdCine).open(map, marker_@cine.IdCine);
+            });
+            var infoWindow_@cine.IdCine = new google.maps.InfoWindow({
+                content: contentString,
+                ariaLabel: "Cines",
+            });
+            </text>
+        }
+                }
+
+        window.initMap = initMap;
+    </script>
+}

@@ -1,0 +1,150 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Cines</h2>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("Form", "Cine", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group">
+            <div class="col-md-1">
+                @Html.LabelFor(model => model.IdCine, new { @class = "visually-hidden" })
+
+                @Html.TextBoxFor(model => model.IdCine, new { @class = "visually-hidden form-control" })
+                @Html.ValidationMessageFor(model => model.IdCine)
+                @*hidden*@
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Latitud)
+                <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-building" style="color:darkcyan"></i></span>
+                @Html.TextBoxFor(model => model.Latitud, new { @class = "form-control", @id = "txtLatitud"/*, @disabled="disabled"*/})
+                @Html.ValidationMessageFor(model => model.Latitud)
+            </div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Longitud)
+                <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-building" style="color:darkcyan"></i></span>
+                @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control", @id = "txtLongitud"/*, @disabled="disabled"*/})
+                @Html.ValidationMessageFor(model => model.Longitud)
+            </div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Direccion)
+                <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-building" style="color:darkcyan"></i></span>
+                @Html.TextBoxFor(model => model.Direccion, new { @class = "form-control", @id = "txtDireccion", @placeholder="Direccion" })
+                @Html.ValidationMessageFor(model => model.Direccion)
+            </div>
+
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Venta)
+                <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-building" style="color:darkcyan"></i></span>
+                @Html.TextBoxFor(model => model.Venta, new { @class = "form-control", @id = "txtVenta",@placeholder="Venta" })
+                @Html.ValidationMessageFor(model => model.Venta)
+            </div>
+
+            @*@Html.LabelFor(model => model.Zona)*@
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Zona)
+                <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-user-tie" style="color:darkcyan"></i></span>
+                @Html.DropDownListFor(model => model.Zona.IdZona, new SelectList(Model.Zona.Zonas, "IdZona", "Nombre"), "Seleccionar", new { @class = "form-control" })
+            </div>
+
+        </div>
+        <br />
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <div id="map"></div>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&v=weekly&sensor=false" defer></script>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-bookmark" style="color:green"></i></span>
+                    <input type="submit" value="Guardar" class="btn btn-success" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1"><i class="fa-solid fa-rotate-left" style="color:red"></i></span>
+                    @Html.ActionLink("Regresar", "GetAll", "Cine", htmlAttributes: new { @class = "btn btn-danger" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    #map {
+        height: 400px;
+        width: 100%; 
+    }
+</style>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        function initMap() {
+            if ($("#txtLatitud").val() == 0 && $("#txtLongitud").val() == 0) {
+                    myLatlng = { lat: 19.428019, lng: -99.163904 };
+            } else{
+                myLatlng = { lat: parseFloat($("#txtLatitud").val()), lng: parseFloat($("#txtLongitud").val()) };
+            }
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 14,
+                center: myLatlng,
+            });
+
+            window.initMap = initMap;
+
+            let infoWindow = new google.maps.InfoWindow({
+                content: "presiona",
+                position: myLatlng,
+            });
+
+            infoWindow.open(map);
+
+            //Direccion
+            google.maps.event.addListener(map, 'click', function (event){
+                var geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({
+                    'latLng': event.latLng
+                }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+                            $("#txtDireccion").val(results[0].formatted_address);
+                        }
+                    }
+                });
+            });
+
+            //Coordenadas
+            map.addListener("click",(mapsMouseEvent) =>{
+                infoWindow.close();
+
+                infoWindow = new google.maps.InfoWindow({
+                    position: mapsMouseEvent.latLng,
+                });
+
+                infoWindow.setContent(
+                    JSON.stringify(mapsMouseEvent.latLng.toJSON(),null,2)
+                );
+
+                infoWindow.open(map);
+                var Latitud = mapsMouseEvent.latLng.lat();
+                var Longitud = mapsMouseEvent.latLng.lng();
+                $("#txtLatitud").val(Latitud);
+                $("#txtLongitud").val(Longitud);
+            });
+        }
+
+    </script>
+}
